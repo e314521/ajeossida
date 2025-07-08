@@ -1,6 +1,8 @@
 .idea
 assets
 ajeossida
+android-ndk-r25c
+android-ndk-r25c-linux.zip
 venv
 .DS_Store
 ios-assets

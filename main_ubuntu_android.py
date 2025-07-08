@@ -33,16 +33,18 @@ def download_ndk():
     file_name = "android-ndk-r25c-linux.zip"
     unzip_dir = "android-ndk-r25c"
 
-    print(f"\n[*] Downloading {file_name}...")
-    response = requests.get(url, stream=True)
-    with open(file_name, 'wb') as file:
-        for chunk in response.iter_content(chunk_size=128):
-            file.write(chunk)
-    print(f"\n[*] Downloaded {file_name}")
+    if not os.path.exists(unzip_dir):
+        if not os.path.exists(file_name):
+            print(f"\n[*] Downloading {file_name}...")
+            response = requests.get(url, stream=True)
+            with open(file_name, 'wb') as file:
+                for chunk in response.iter_content(chunk_size=128):
+                    file.write(chunk)
+            print(f"\n[*] Downloaded {file_name}")
 
-    run_command(f"unzip {file_name} >/dev/null")
+        run_command(f"unzip {file_name} >/dev/null")
 
-    os.remove(file_name)
+    #os.remove(file_name)
 
     return unzip_dir
 
@@ -140,9 +142,20 @@ def main():
     if os.path.exists(assets_dir):
         print(f"\n[*] Cleaning {assets_dir}...")
         shutil.rmtree(assets_dir)
+
+
     os.mkdir(assets_dir)
 
-    git_clone_repo()
+    run_command(f"unzip -q ../frida.zip -d {custom_dir}")
+
+    run_command("git checkout 16.5.9", cwd=custom_dir)
+
+    run_command("git submodule update --init --recursive --force", cwd=custom_dir)
+
+    run_command(f"unzip -q ../deps.zip -d {custom_dir}")
+
+    #git_clone_repo()
+  
 
     ndk_path = os.path.join(os.getcwd(), download_ndk())
 

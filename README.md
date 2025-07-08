@@ -45,3 +45,5 @@ However, the app will crash after a few seconds. Bypassing the crash is up to yo
 - [Florida](https://github.com/Ylarod/Florida)
 - [magisk-frida](https://github.com/ViRb3/magisk-frida)
 
+
+sudo apt install npm build-essential
