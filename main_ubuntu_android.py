@@ -145,8 +145,10 @@ def main():
 
 
     os.mkdir(assets_dir)
-
-    run_command(f"unzip -q ../frida.zip -d {custom_dir}")
+    if os.path.exists("../frida.zip"):
+        run_command(f"unzip -q ../frida.zip -d {custom_dir}")
+    else:
+        git_clone_repo()
 
     run_command("git checkout 16.5.9", cwd=custom_dir)
 
@@ -160,6 +162,7 @@ def main():
     ndk_path = os.path.join(os.getcwd(), download_ndk())
 
     architectures = ["android-arm64", "android-arm", "android-x86_64", "android-x86"]
+    architectures = ["android-arm64"]
     if TEMP == 1:
         architectures = ["android-arm64"]
     build_dirs = [configure_build(ndk_path, arch) for arch in architectures]
