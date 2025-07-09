@@ -152,11 +152,9 @@ def main():
             run_command(f"unzip -q ../frida.zip -d {custom_dir}")
         else:
             git_clone_repo()
-
-        run_command("git checkout 16.6.0", cwd=custom_dir)
-
+        run_command("git checkout 16.7.0", cwd=custom_dir)
         run_command("git submodule update --init --recursive --force", cwd=custom_dir)
-
+    if os.path.exists("../deps.zip"):
         run_command(f"unzip -q ../deps.zip -d {custom_dir}")
 
     #git_clone_repo()
