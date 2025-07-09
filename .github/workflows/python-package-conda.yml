@@ -12,7 +12,7 @@ jobs:
     - name: Init environment variable
       run: |
         python3 main_ubuntu_android.py
-        echo "${{ env.ver_name }}"
+        echo ${{ env.ver_name }}
         exit(0)
         
     - uses: actions/checkout@v4
