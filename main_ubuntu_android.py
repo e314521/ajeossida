@@ -163,9 +163,6 @@ def main():
     if os.path.exists("../deps.zip"):
         run_command(f"unzip -q ../deps.zip -d {custom_dir}")
 
-
-    return
-
     ndk_path = os.path.join(os.getcwd(), download_ndk())
 
     architectures = ["android-arm64", "android-arm", "android-x86_64", "android-x86"]
