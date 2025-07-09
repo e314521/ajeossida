@@ -1,0 +1,95 @@
+--- ajeossida/subprojects/frida-gum/gum/backend-arm64/guminterceptor-arm64.c	2025-07-09 15:52:06.322402578 +0800
++++ ajeossida/subprojects/frida-gum/gum/backend-arm64/guminterceptor-arm64-modified.c	2025-07-09 14:27:54.638009708 +0800
+@@ -631,11 +631,10 @@
+ 
+   *need_deflector = FALSE;
+ 
+-  if (gum_arm64_relocator_can_relocate (function_address, 16,
++  if (gum_arm64_relocator_can_relocate (function_address, 20,
+       GUM_SCENARIO_ONLINE, &redirect_limit, &data->scratch_reg))
+   {
+-    data->redirect_code_size = 16;
+-
++    data->redirect_code_size = 20;
+     ctx->trampoline_slice = gum_code_allocator_alloc_slice (self->allocator);
+   }
+   else
+@@ -643,9 +642,9 @@
+     GumAddressSpec spec;
+     gsize alignment;
+ 
+-    if (redirect_limit >= 8)
++    if (redirect_limit >= 12)
+     {
+-      data->redirect_code_size = 8;
++      data->redirect_code_size = 12;
+ 
+       spec.near_address = GSIZE_TO_POINTER (
+           GPOINTER_TO_SIZE (function_address) &
+@@ -653,6 +652,14 @@
+       spec.max_distance = GUM_ARM64_ADRP_MAX_DISTANCE;
+       alignment = GUM_ARM64_LOGICAL_PAGE_SIZE;
+     }
++    else if (redirect_limit >= 8)
++    {
++      data->redirect_code_size = 8;
++
++      spec.near_address = function_address;
++      spec.max_distance = GUM_ARM64_B_MAX_DISTANCE;
++      alignment = 0;
++    }
+     else if (redirect_limit >= 4)
+     {
+       data->redirect_code_size = 4;
+@@ -717,7 +724,6 @@
+         gum_sign_code_pointer (gum_arm64_writer_cur (aw));
+     deflector_target = ctx->on_enter_trampoline;
+   }
+-
+   if (need_deflector)
+   {
+     GumAddressSpec caller;
+@@ -933,15 +939,24 @@
+ 
+   gum_arm64_writer_reset (aw, prologue);
+   aw->pc = GUM_ADDRESS (ctx->function_address);
++  
++  
+ 
+   if (ctx->trampoline_deflector != NULL)
+   {
+-    if (data->redirect_code_size == 8)
++    if (data->redirect_code_size == 12)
+     {
++      gum_arm64_writer_put_nop(aw);
+       gum_arm64_writer_put_push_reg_reg (aw, ARM64_REG_X0, ARM64_REG_LR);
+       gum_arm64_writer_put_bl_imm (aw,
+           GUM_ADDRESS (ctx->trampoline_deflector->trampoline));
+     }
++    else if(data->redirect_code_size == 8)
++    {
++      gum_arm64_writer_put_nop(aw);
++      gum_arm64_writer_put_b_imm (aw,
++          GUM_ADDRESS (ctx->trampoline_deflector->trampoline));
++    }
+     else
+     {
+       g_assert (data->redirect_code_size == 4);
+@@ -957,10 +972,16 @@
+         gum_arm64_writer_put_b_imm (aw, on_enter);
+         break;
+       case 8:
++        gum_arm64_writer_put_nop(aw);
++        gum_arm64_writer_put_b_imm (aw, on_enter);
++        break;
++      case 12:
++        gum_arm64_writer_put_nop(aw);
+         gum_arm64_writer_put_adrp_reg_address (aw, data->scratch_reg, on_enter);
+         gum_arm64_writer_put_br_reg_no_auth (aw, data->scratch_reg);
+         break;
+-      case 16:
++      case 20:
++        gum_arm64_writer_put_nop(aw);
+         gum_arm64_writer_put_ldr_reg_address (aw, data->scratch_reg, on_enter);
+         gum_arm64_writer_put_br_reg (aw, data->scratch_reg);
+         break;
