@@ -18,12 +18,6 @@ jobs:
         python-version: '3.10'
     - run: pip install requests
        
-    - name: Init environment variable
-      run: |
-        python3 main_ubuntu_android.py
-        echo ${{ env.ver_name }}
-        exit(0)
-        
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
