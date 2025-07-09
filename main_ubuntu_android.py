@@ -138,13 +138,6 @@ def main():
     global CUSTOM_NAME
     if os.getenv("CUSTOM_NAME"):
         CUSTOM_NAME = os.getenv("CUSTOM_NAME")
-    print(CUSTOM_NAME)
-
-    os.environ["MY_VARIABLE"] = "my_value" 
-
-    print(os.getenv("MY_VARIABLE"))
-    return
-
     custom_dir = os.path.join(os.getcwd(), "ajeossida")
     #if os.path.exists(custom_dir):
     #    print(f"\n[*] Cleaning {custom_dir}...")
@@ -373,8 +366,7 @@ def main():
     frida_version_py = os.path.join(custom_dir, "releng/frida_version.py")
     result = subprocess.run(['python3', frida_version_py], capture_output=True, text=True)
     frida_version = result.stdout.strip()
-
-
+    os.environ["ver_name"] = frida_version
     # Rename
     for file_path in patch_list:
         if '-agent.so' in file_path:
