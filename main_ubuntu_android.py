@@ -22,7 +22,7 @@ def run_command(command, cwd=None):
 
 def git_clone_repo():
     repo_url = "https://github.com/frida/frida.git"
-    destination_dir = os.path.join(os.getcwd(), CUSTOM_NAME)
+    destination_dir = os.path.join(os.getcwd(), "ajeossida")
 
     print(f"\n[*] Cloning repository {repo_url} to {destination_dir}...")
     run_command(f"git clone --recurse-submodules {repo_url} {destination_dir}")
@@ -50,7 +50,8 @@ def download_ndk():
 
 
 def configure_build(ndk_path, arch):
-    build_dir = os.path.join(os.getcwd(), CUSTOM_NAME, arch)
+
+    build_dir = os.path.join(os.getcwd(), "ajeossida", arch)
     if os.path.exists(build_dir):
         return build_dir
     os.makedirs(build_dir, exist_ok=True)
@@ -134,7 +135,17 @@ def fix_process_enumerate_threads_crash(custom_dir):
 
 
 def main():
-    custom_dir = os.path.join(os.getcwd(), CUSTOM_NAME)
+    global CUSTOM_NAME
+    if os.getenv("CUSTOM_NAME"):
+        CUSTOM_NAME = os.getenv("CUSTOM_NAME")
+    print(CUSTOM_NAME)
+
+    os.environ["MY_VARIABLE"] = "my_value" 
+
+    print(os.getenv("MY_VARIABLE"))
+    return
+
+    custom_dir = os.path.join(os.getcwd(), "ajeossida")
     #if os.path.exists(custom_dir):
     #    print(f"\n[*] Cleaning {custom_dir}...")
     #    shutil.rmtree(custom_dir)
@@ -152,8 +163,10 @@ def main():
             run_command(f"unzip -q ../frida.zip -d {custom_dir}")
         else:
             git_clone_repo()
-        #run_command("git checkout 16.7.0", cwd=custom_dir)
-        #run_command("git submodule update --init --recursive --force", cwd=custom_dir)
+        CUSTOM_VERSION = os.getenv("CUSTOM_VERSION")
+        if CUSTOM_VERSION:
+            run_command("git checkout " + CUSTOM_VERSION, cwd=custom_dir)
+            run_command("git submodule update --init --recursive --force", cwd=custom_dir)
     if os.path.exists("../deps.zip"):
         run_command(f"unzip -q ../deps.zip -d {custom_dir}")
 
@@ -163,7 +176,7 @@ def main():
     ndk_path = os.path.join(os.getcwd(), download_ndk())
 
     architectures = ["android-arm64", "android-arm", "android-x86_64", "android-x86"]
-    architectures = ["android-arm64"]
+    #architectures = ["android-arm64"]
     if TEMP == 1:
         architectures = ["android-arm64"]
     build_dirs = [configure_build(ndk_path, arch) for arch in architectures]
@@ -360,6 +373,7 @@ def main():
     frida_version_py = os.path.join(custom_dir, "releng/frida_version.py")
     result = subprocess.run(['python3', frida_version_py], capture_output=True, text=True)
     frida_version = result.stdout.strip()
+
 
     # Rename
     for file_path in patch_list:
