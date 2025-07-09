@@ -9,7 +9,7 @@ jobs:
       max-parallel: 5
 
     steps:
-
+    
         
     - uses: actions/checkout@v4
     - name: Set up Python 3.10
@@ -17,7 +17,16 @@ jobs:
       with:
         python-version: '3.10'
     - run: pip install requests
-       
+        
+    - name: Init environment variable
+      run: |
+        python3 main_ubuntu_android.py
+        echo "ver_name=$(python3 ajeossida/releng/frida_version.py)" >> $GITHUB_ENV
+        python3 main_ubuntu_android.py
+        echo ${{ env.ver_name }}
+        exit(0)
+
+        
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
