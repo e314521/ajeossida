@@ -163,8 +163,7 @@ def main():
     if os.path.exists("../deps.zip"):
         run_command(f"unzip -q ../deps.zip -d {custom_dir}")
 
-    #git_clone_repo()
-    return 0
+
   
 
     ndk_path = os.path.join(os.getcwd(), download_ndk())
