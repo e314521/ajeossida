@@ -1,0 +1,6 @@
+{
+    "search.useIgnoreFiles": false,
+    "files.associations": {
+        "*.inc": "c"
+    }
+}

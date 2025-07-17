@@ -1,0 +1,21 @@
+--- ajeossida/subprojects/frida-gum/bindings/gumjs/gumquickcore.c	2025-07-17 14:42:36.304835913 +0800
++++ ajeossida/subprojects/frida-gum/bindings/gumjs/gumquickcore-modified.c	2025-07-17 14:40:18.316523257 +0800
+@@ -5065,10 +5065,14 @@
+ 
+   if (!JS_IsException (result) && cif->rtype != &ffi_type_void)
+   {
+-    if (!gum_quick_value_to_ffi (ctx, result, cif->rtype, core, &tmp_value))
+-      _gum_quick_scope_catch_and_emit (&scope);
+-
+-    gum_ffi_arg_to_ret (cif->rtype, &tmp_value, retval);
++    if(cif->rtype->type == FFI_TYPE_STRUCT){
++      if (!gum_quick_value_to_ffi (ctx, result, cif->rtype, core, retval))
++        _gum_quick_scope_catch_and_emit (&scope);
++    }else{
++      if (!gum_quick_value_to_ffi (ctx, result, cif->rtype, core, &tmp_value))
++        _gum_quick_scope_catch_and_emit (&scope);
++      gum_ffi_arg_to_ret (cif->rtype, &tmp_value, retval);
++    }
+   }
+   JS_FreeValue (ctx, result);
+ 

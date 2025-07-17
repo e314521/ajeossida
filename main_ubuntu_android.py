@@ -302,6 +302,12 @@ def main():
         # hook patch nop 
         print(f"\n[*] Patch guminterceptor-arm64")
         run_command(f"patch -p0 < guminterceptor-arm64.patch")
+        
+        # 修改STRUCT 返回错误
+        print(f"\n[*] Patch ggumquickcore.c")
+        run_command(f"patch -p0 < gumquickcore.c.patch")
+        
+        
         # Selinux patch for Android
         print(f"\n[*] Patch 'frida_file', 'frida_memfd with '{CUSTOM_NAME}_file', '{CUSTOM_NAME}_memfd recursively...")
         patch_strings = ["\"frida_file\"", "\"frida_memfd\"", ":frida_file", ":frida_memfd"]
