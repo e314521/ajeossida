@@ -19,6 +19,14 @@ def run_command(command, cwd=None):
         print(f"Error while running command: {command}\nError: {e}")
         sys.exit(1)
 
+def run_command_no_exit(command, cwd=None):
+    try:
+        result = subprocess.run(command, shell=True, cwd=cwd, check=True, text=True)
+        return result.returncode
+    except subprocess.CalledProcessError as e:
+        print(f"Error while running command: {command}\nError: {e}")
+
+
 
 def git_clone_repo():
     repo_url = "https://github.com/frida/frida.git"
@@ -166,7 +174,7 @@ def main():
     ndk_path = os.path.join(os.getcwd(), download_ndk())
 
     architectures = ["android-arm64", "android-arm", "android-x86_64", "android-x86"]
-    #architectures = ["android-arm64"]
+    architectures = ["android-arm64"]
     if TEMP == 1:
         architectures = ["android-arm64"]
     build_dirs = [configure_build(ndk_path, arch) for arch in architectures]
@@ -280,7 +288,7 @@ def main():
                                 patch_string,
                                 patch_string.replace("frida", CUSTOM_NAME))
 
-        """ # No libc.so libsystem_c.dylib hooking
+        # No libc.so libsystem_c.dylib hooking
         print(f"\n[*] Patch not to hook libc function")
         # frida/subprojects/frida-core/lib/payload/exit-monitor.vala
         exit_monitor_path = os.path.join(custom_dir, "subprojects/frida-core/lib/payload/exit-monitor.vala")
@@ -297,15 +305,15 @@ def main():
         for patch_string in gumexceptor_posix_patch_strings:
             replace_strings_in_files(gumexceptor_posix_path,
                                     patch_string,
-                                    "// " + patch_string) """
+                                    "// " + patch_string)
 
         # hook patch nop 
         print(f"\n[*] Patch guminterceptor-arm64")
-        run_command(f"patch -p0 < guminterceptor-arm64.patch")
+        run_command_no_exit(f"patch -p0 < guminterceptor-arm64.patch")
         
         # 修改STRUCT 返回错误
         print(f"\n[*] Patch ggumquickcore.c")
-        run_command(f"patch -p0 < gumquickcore.c.patch")
+        run_command_no_exit(f"patch -p0 < gumquickcore.c.patch")
         
         
         # Selinux patch for Android
