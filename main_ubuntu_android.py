@@ -174,7 +174,7 @@ def main():
     ndk_path = os.path.join(os.getcwd(), download_ndk())
 
     architectures = ["android-arm64", "android-arm", "android-x86_64", "android-x86"]
-    architectures = ["android-arm64"]
+    #architectures = ["android-arm64"]
     if TEMP == 1:
         architectures = ["android-arm64"]
     build_dirs = [configure_build(ndk_path, arch) for arch in architectures]

@@ -59,7 +59,7 @@
    if (ctx->trampoline_deflector != NULL)
    {
 -    if (data->redirect_code_size == 8)
-+    if (data->redirect_code_size == 12)
++    if (data->redirect_code_size >= 12)
      {
 +      gum_arm64_writer_put_nop(aw);
        gum_arm64_writer_put_push_reg_reg (aw, ARM64_REG_X0, ARM64_REG_LR);
